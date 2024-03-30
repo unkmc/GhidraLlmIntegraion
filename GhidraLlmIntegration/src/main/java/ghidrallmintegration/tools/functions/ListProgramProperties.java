@@ -8,7 +8,7 @@ import ghidra.program.model.lang.CompilerSpec;
 import ghidra.program.model.lang.Language;
 import ghidra.util.task.TaskMonitor;
 import ghidrallmintegration.Json;
-import ghidrallmintegration.tools.LlmTool;
+import ghidrallmintegration.tools.LlmTool; import ghidra.framework.plugintool.PluginTool;
 
 public class ListProgramProperties extends LlmTool {
 	@Override
@@ -16,8 +16,8 @@ public class ListProgramProperties extends LlmTool {
 		return "Returns a list of key properties of the current program";
 	}
 
-	public ListProgramProperties(Program currentProgram, TaskMonitor monitor) {
-		super(currentProgram, monitor);
+	public ListProgramProperties(Program currentProgram, PluginTool tool, TaskMonitor monitor) {
+		super(currentProgram, tool, monitor);
 	}
 
 	@Override

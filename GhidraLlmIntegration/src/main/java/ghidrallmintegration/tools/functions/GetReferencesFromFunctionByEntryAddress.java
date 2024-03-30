@@ -12,7 +12,7 @@ import ghidra.program.model.listing.Program;
 import ghidra.program.model.symbol.Reference;
 import ghidra.program.model.symbol.ReferenceManager;
 import ghidra.util.task.TaskMonitor;
-import ghidrallmintegration.tools.LlmTool;
+import ghidrallmintegration.tools.LlmTool; import ghidra.framework.plugintool.PluginTool;
 
 public class GetReferencesFromFunctionByEntryAddress extends LlmTool {
 	@Override
@@ -28,8 +28,8 @@ public class GetReferencesFromFunctionByEntryAddress extends LlmTool {
 				Map.entry(parameter_1, "function's entry address"));
 	}
 
-	public GetReferencesFromFunctionByEntryAddress(Program currentProgram, TaskMonitor monitor) {
-		super(currentProgram, monitor);
+	public GetReferencesFromFunctionByEntryAddress(Program currentProgram, PluginTool tool, TaskMonitor monitor) {
+		super(currentProgram, tool, monitor);
 	}
 
 	@Override

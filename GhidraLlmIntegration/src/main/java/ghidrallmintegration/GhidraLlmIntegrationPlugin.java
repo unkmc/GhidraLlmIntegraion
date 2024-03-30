@@ -40,6 +40,7 @@ import ghidra.util.task.TaskBuilder;
 import ghidra.util.task.TaskMonitor;
 import ghidra.util.task.TaskMonitorAdapter;
 import ghidrallmintegration.tools.LlmTool;
+import ghidra.framework.plugintool.PluginTool;
 import org.reflections.Reflections;
 import java.util.Set;
 
@@ -114,8 +115,8 @@ public class GhidraLlmIntegrationPlugin extends ProgramPlugin {
 		Set<Class<? extends LlmTool>> classes = reflections.getSubTypesOf(LlmTool.class);
 		for (Class<? extends LlmTool> clazz : classes) {
 			LlmTool toolInstance = clazz
-					.getConstructor(Program.class, TaskMonitor.class)
-					.newInstance(currentProgram, monitor);
+					.getConstructor(Program.class, PluginTool.class, TaskMonitor.class)
+					.newInstance(currentProgram, this.tool, monitor);
 			toolMap.put(clazz.getSimpleName(), toolInstance);
 		}
 	}

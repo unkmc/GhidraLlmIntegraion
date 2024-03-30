@@ -8,6 +8,7 @@ import ghidra.program.model.listing.Variable;
 import ghidra.program.model.symbol.SourceType;
 import ghidra.util.task.TaskMonitor;
 import ghidrallmintegration.tools.LlmTool;
+import ghidra.framework.plugintool.PluginTool;
 
 public class SetLocalVariableNameInFunction extends LlmTool {
 	@Override
@@ -27,8 +28,8 @@ public class SetLocalVariableNameInFunction extends LlmTool {
 				Map.entry(parameter_3, "new variable name"));
 	}
 
-	public SetLocalVariableNameInFunction(Program currentProgram, TaskMonitor monitor) {
-		super(currentProgram, monitor);
+	public SetLocalVariableNameInFunction(Program currentProgram, PluginTool tool, TaskMonitor monitor) {
+		super(currentProgram, tool, monitor);
 	}
 
 	@Override
@@ -40,11 +41,18 @@ public class SetLocalVariableNameInFunction extends LlmTool {
 		String targetName = parameterMap.get(parameter_2);
 		String newName = parameterMap.get(parameter_3);
 
-		Variable[] localVariables = function.getLocalVariables();
-		for (Variable variable : localVariables) {
-			if (variable.getName().equals(targetName)) {
-				variable.setName(newName, SourceType.USER_DEFINED);
+		var id = currentProgram.startTransaction("Rename a local variable");
+		try {
+			Variable[] localVariables = function.getLocalVariables();
+			for (Variable variable : localVariables) {
+				if (variable.getName().equals(targetName)) {
+					variable.setName(newName, SourceType.USER_DEFINED);
+				}
 			}
+			currentProgram.endTransaction(id, true);
+		} catch (Exception e) {
+			currentProgram.endTransaction(id, false);
+			throw e;
 		}
 
 		return "SUCCESS";

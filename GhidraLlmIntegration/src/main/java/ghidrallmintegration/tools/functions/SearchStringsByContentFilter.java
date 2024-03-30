@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import ghidrallmintegration.Json;
-import ghidrallmintegration.tools.LlmTool;
+import ghidrallmintegration.tools.LlmTool; import ghidra.framework.plugintool.PluginTool;
 
 public class SearchStringsByContentFilter extends LlmTool {
 
@@ -25,8 +25,8 @@ public class SearchStringsByContentFilter extends LlmTool {
 				Map.entry(parameter_1, "Content filter (substring to search within strings)"));
 	}
 
-	public SearchStringsByContentFilter(Program currentProgram, TaskMonitor monitor) {
-		super(currentProgram, monitor);
+	public SearchStringsByContentFilter(Program currentProgram, PluginTool tool, TaskMonitor monitor) {
+		super(currentProgram, tool, monitor);
 	}
 
 	@Override

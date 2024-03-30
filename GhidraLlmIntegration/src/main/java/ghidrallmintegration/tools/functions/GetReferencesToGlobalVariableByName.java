@@ -14,7 +14,7 @@ import ghidra.program.model.symbol.Symbol;
 import ghidra.program.model.symbol.SymbolTable;
 import ghidra.program.model.symbol.SymbolType;
 import ghidra.util.task.TaskMonitor;
-import ghidrallmintegration.tools.LlmTool;
+import ghidrallmintegration.tools.LlmTool; import ghidra.framework.plugintool.PluginTool;
 
 public class GetReferencesToGlobalVariableByName extends LlmTool {
 	@Override
@@ -30,8 +30,8 @@ public class GetReferencesToGlobalVariableByName extends LlmTool {
 				Map.entry(parameter_1, "name"));
 	}
 
-	public GetReferencesToGlobalVariableByName(Program currentProgram, TaskMonitor monitor) {
-		super(currentProgram, monitor);
+	public GetReferencesToGlobalVariableByName(Program currentProgram, PluginTool tool, TaskMonitor monitor) {
+		super(currentProgram, tool, monitor);
 	}
 
 	@Override

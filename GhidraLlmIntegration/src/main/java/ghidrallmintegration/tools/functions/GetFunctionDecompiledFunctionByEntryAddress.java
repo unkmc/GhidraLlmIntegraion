@@ -7,7 +7,7 @@ import ghidra.app.decompiler.DecompileResults;
 import ghidra.program.model.listing.Function;
 import ghidra.program.model.listing.Program;
 import ghidra.util.task.TaskMonitor;
-import ghidrallmintegration.tools.LlmTool;
+import ghidrallmintegration.tools.LlmTool; import ghidra.framework.plugintool.PluginTool;
 
 public class GetFunctionDecompiledFunctionByEntryAddress extends LlmTool {
 	@Override
@@ -23,8 +23,8 @@ public class GetFunctionDecompiledFunctionByEntryAddress extends LlmTool {
 				Map.entry(parameter_1, "function entry address"));
 	}
 
-	public GetFunctionDecompiledFunctionByEntryAddress(Program currentProgram, TaskMonitor monitor) {
-		super(currentProgram, monitor);
+	public GetFunctionDecompiledFunctionByEntryAddress(Program currentProgram, PluginTool tool, TaskMonitor monitor) {
+		super(currentProgram, tool, monitor);
 	}
 
 	@Override

@@ -8,7 +8,7 @@ import java.util.Map;
 import ghidra.program.model.listing.Program;
 import ghidra.util.task.TaskMonitor;
 import ghidrallmintegration.Json;
-import ghidrallmintegration.tools.LlmTool;
+import ghidrallmintegration.tools.LlmTool; import ghidra.framework.plugintool.PluginTool;
 import ghidra.program.model.data.DataType;
 import ghidra.program.model.data.DataTypeManager;
 
@@ -18,8 +18,8 @@ public class ListDataTypes extends LlmTool {
 		return "Lists all data types recognized in the current Ghidra project.";
 	}
 
-	public ListDataTypes(Program currentProgram, TaskMonitor monitor) {
-		super(currentProgram, monitor);
+	public ListDataTypes(Program currentProgram, PluginTool tool, TaskMonitor monitor) {
+		super(currentProgram, tool, monitor);
 	}
 
 	@Override

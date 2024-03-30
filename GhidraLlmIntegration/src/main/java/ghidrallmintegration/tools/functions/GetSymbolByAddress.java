@@ -6,7 +6,7 @@ import ghidra.program.model.symbol.Symbol;
 import ghidra.program.model.symbol.SymbolTable;
 import ghidra.util.task.TaskMonitor;
 import ghidrallmintegration.Json;
-import ghidrallmintegration.tools.LlmTool;
+import ghidrallmintegration.tools.LlmTool; import ghidra.framework.plugintool.PluginTool;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +26,8 @@ public class GetSymbolByAddress extends LlmTool {
 				Map.entry(parameter_1, "Address of the symbol to find"));
 	}
 
-	public GetSymbolByAddress(Program currentProgram, TaskMonitor monitor) {
-		super(currentProgram, monitor);
+	public GetSymbolByAddress(Program currentProgram, PluginTool tool, TaskMonitor monitor) {
+		super(currentProgram, tool, monitor);
 	}
 
 	@Override

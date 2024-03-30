@@ -11,7 +11,7 @@ import ghidra.program.model.symbol.Reference;
 import ghidra.program.model.symbol.ReferenceIterator;
 import ghidra.program.model.symbol.ReferenceManager;
 import ghidra.util.task.TaskMonitor;
-import ghidrallmintegration.tools.LlmTool;
+import ghidrallmintegration.tools.LlmTool; import ghidra.framework.plugintool.PluginTool;
 
 public class GetReferencesToSymbolByAddress extends LlmTool {
 	@Override
@@ -27,8 +27,8 @@ public class GetReferencesToSymbolByAddress extends LlmTool {
 				Map.entry(parameter_1, "address"));
 	}
 
-	public GetReferencesToSymbolByAddress(Program currentProgram, TaskMonitor monitor) {
-		super(currentProgram, monitor);
+	public GetReferencesToSymbolByAddress(Program currentProgram, PluginTool tool, TaskMonitor monitor) {
+		super(currentProgram, tool, monitor);
 	}
 
 	@Override

@@ -2,7 +2,6 @@ package ghidrallmintegration.tools;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,19 +13,19 @@ import com.theokanning.openai.assistants.Tool;
 
 import ghidra.app.decompiler.DecompInterface;
 import ghidra.app.decompiler.DecompileResults;
+import ghidra.app.services.GoToService;
+import ghidra.framework.plugintool.PluginTool;
 import ghidra.program.model.address.Address;
 import ghidra.program.model.address.AddressFactory;
-import ghidra.program.model.data.DataType;
-import ghidra.program.model.data.ParameterDefinition;
 import ghidra.program.model.listing.Function;
 import ghidra.program.model.listing.FunctionManager;
-import ghidra.program.model.listing.FunctionSignature;
 import ghidra.program.model.listing.Program;
 import ghidra.program.model.pcode.HighFunction;
 import ghidra.program.model.symbol.Symbol;
 import ghidra.program.model.symbol.SymbolIterator;
 import ghidra.program.model.symbol.SymbolTable;
 import ghidra.program.model.symbol.SymbolType;
+import ghidra.program.util.ProgramLocation;
 import ghidra.util.Msg;
 import ghidra.util.task.TaskMonitor;
 import ghidrallmintegration.tools.ToolParameters.Builder;
@@ -35,10 +34,12 @@ public abstract class LlmTool {
 	protected Gson gson = new Gson();
 	protected Program currentProgram;
 	protected TaskMonitor monitor;
+	protected PluginTool tool;
 
-	protected LlmTool(Program currentProgram, TaskMonitor monitor) {
+	protected LlmTool(Program currentProgram, PluginTool tool, TaskMonitor monitor) {
 		this.currentProgram = currentProgram;
 		this.monitor = monitor;
+		this.tool = tool;
 	}
 
 	public abstract String execute(String parameterJson) throws Exception;
@@ -155,5 +156,16 @@ public abstract class LlmTool {
 		}
 		return results;
 	}
+	
+    protected Address getCurrentAddress() {
+        GoToService goToService = tool.getService(GoToService.class);
+        if (goToService != null) {
+            ProgramLocation location = goToService.getDefaultNavigatable().getLocation();
+            if (location != null) {
+                return location.getAddress();
+            }
+        }
+        return null; // No current address focused
+    }
 
 }

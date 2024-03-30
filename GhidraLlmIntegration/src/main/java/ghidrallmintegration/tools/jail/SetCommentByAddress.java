@@ -8,7 +8,7 @@ import ghidra.program.model.listing.CodeUnit;
 import ghidra.program.model.listing.Listing;
 import ghidra.program.model.listing.Program;
 import ghidra.util.task.TaskMonitor;
-import ghidrallmintegration.tools.LlmTool;
+import ghidrallmintegration.tools.LlmTool; import ghidra.framework.plugintool.PluginTool;
 import ghidrallmintegration.tools.ToolParameters;
 import ghidrallmintegration.tools.ToolParameters.Builder;
 
@@ -43,8 +43,8 @@ public class SetCommentByAddress extends LlmTool {
 		return toolParameters;
 	}
 
-	public SetCommentByAddress(Program currentProgram, TaskMonitor monitor) {
-		super(currentProgram, monitor);
+	public SetCommentByAddress(Program currentProgram, PluginTool tool, TaskMonitor monitor) {
+		super(currentProgram, tool, monitor);
 	}
 
 	@Override

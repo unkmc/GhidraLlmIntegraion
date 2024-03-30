@@ -8,7 +8,7 @@ import ghidra.program.model.listing.Function;
 import ghidra.program.model.listing.Program;
 import ghidra.util.task.TaskMonitor;
 import ghidrallmintegration.Json;
-import ghidrallmintegration.tools.LlmTool;
+import ghidrallmintegration.tools.LlmTool; import ghidra.framework.plugintool.PluginTool;
 
 public class GetFunctionMetaByName extends LlmTool {
 	@Override
@@ -24,8 +24,8 @@ public class GetFunctionMetaByName extends LlmTool {
 				Map.entry(parameter_1, "function name"));
 	}
 
-	public GetFunctionMetaByName(Program currentProgram, TaskMonitor monitor) {
-		super(currentProgram, monitor);
+	public GetFunctionMetaByName(Program currentProgram, PluginTool tool, TaskMonitor monitor) {
+		super(currentProgram, tool, monitor);
 	}
 
 	@Override

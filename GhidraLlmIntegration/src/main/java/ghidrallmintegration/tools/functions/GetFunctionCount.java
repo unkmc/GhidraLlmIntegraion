@@ -3,13 +3,13 @@ package ghidrallmintegration.tools.functions;
 import ghidra.program.model.listing.FunctionManager;
 import ghidra.program.model.listing.Program;
 import ghidra.util.task.TaskMonitor;
-import ghidrallmintegration.tools.LlmTool;
+import ghidrallmintegration.tools.LlmTool; import ghidra.framework.plugintool.PluginTool;
 
 public class GetFunctionCount extends LlmTool {
 	private final FunctionManager functionManager;
 
-	public GetFunctionCount(Program currentProgram, TaskMonitor monitor) {
-		super(currentProgram, monitor);
+	public GetFunctionCount(Program currentProgram, PluginTool tool, TaskMonitor monitor) {
+		super(currentProgram, tool, monitor);
 		this.functionManager = currentProgram.getFunctionManager();
 	}
 

@@ -6,7 +6,7 @@ import ghidra.program.model.listing.Function;
 import ghidra.program.model.listing.Program;
 import ghidra.util.task.TaskMonitor;
 import ghidrallmintegration.Json;
-import ghidrallmintegration.tools.LlmTool;
+import ghidrallmintegration.tools.LlmTool; import ghidra.framework.plugintool.PluginTool;
 
 public class GetFunctionMetaByContainingAddress extends LlmTool {
 	@Override
@@ -22,8 +22,8 @@ public class GetFunctionMetaByContainingAddress extends LlmTool {
 				Map.entry(parameter_1, "address"));
 	}
 
-	public GetFunctionMetaByContainingAddress(Program currentProgram, TaskMonitor monitor) {
-		super(currentProgram, monitor);
+	public GetFunctionMetaByContainingAddress(Program currentProgram, PluginTool tool, TaskMonitor monitor) {
+		super(currentProgram, tool, monitor);
 	}
 
 	@Override

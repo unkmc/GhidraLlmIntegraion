@@ -9,7 +9,7 @@ import ghidra.program.model.symbol.SymbolIterator;
 import ghidra.program.model.symbol.SymbolTable;
 import ghidra.program.model.symbol.SymbolType;
 import ghidra.util.task.TaskMonitor;
-import ghidrallmintegration.tools.LlmTool;
+import ghidrallmintegration.tools.LlmTool; import ghidra.framework.plugintool.PluginTool;
 
 public class SetGlobalVariableName extends LlmTool {
 	@Override
@@ -27,8 +27,8 @@ public class SetGlobalVariableName extends LlmTool {
 				Map.entry(parameter_2, "new variable name"));
 	}
 
-	public SetGlobalVariableName(Program currentProgram, TaskMonitor monitor) {
-		super(currentProgram, monitor);
+	public SetGlobalVariableName(Program currentProgram, PluginTool tool, TaskMonitor monitor) {
+		super(currentProgram, tool, monitor);
 	}
 
 	@Override
@@ -55,7 +55,16 @@ public class SetGlobalVariableName extends LlmTool {
 	        throw new Exception("Global variable not found.");
 	    }
 	    
-	    globalVarSymbol.setName(targetName,SourceType.USER_DEFINED);
+	    
+		var id = currentProgram.startTransaction("Rename a global variable");
+		try {
+		    globalVarSymbol.setName(targetName,SourceType.USER_DEFINED);
+			currentProgram.endTransaction(id, true);
+		} catch (Exception e) {
+			currentProgram.endTransaction(id, false);
+			throw e;
+		}
+	    
 		return "SUCCESS";
 	}
 }

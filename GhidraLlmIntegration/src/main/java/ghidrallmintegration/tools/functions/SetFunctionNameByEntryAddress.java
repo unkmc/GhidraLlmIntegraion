@@ -7,6 +7,7 @@ import ghidra.program.model.listing.Program;
 import ghidra.program.model.symbol.SourceType;
 import ghidra.util.task.TaskMonitor;
 import ghidrallmintegration.tools.LlmTool;
+import ghidra.framework.plugintool.PluginTool;
 
 public class SetFunctionNameByEntryAddress extends LlmTool {
 	@Override
@@ -24,8 +25,8 @@ public class SetFunctionNameByEntryAddress extends LlmTool {
 				Map.entry(parameter_2, "new name"));
 	}
 
-	public SetFunctionNameByEntryAddress(Program currentProgram, TaskMonitor monitor) {
-		super(currentProgram, monitor);
+	public SetFunctionNameByEntryAddress(Program currentProgram, PluginTool tool, TaskMonitor monitor) {
+		super(currentProgram, tool, monitor);
 	}
 
 	@Override
@@ -33,11 +34,17 @@ public class SetFunctionNameByEntryAddress extends LlmTool {
 		Map<String, String> parameterMap = parseParameterMap(parameterJson);
 		String addressStr = parameterMap.get(parameter_1);
 		Function function = getFunctionByEntryAddress(addressStr);
-
 		String newName = parameterMap.get(parameter_2);
-		function.setName(newName, SourceType.USER_DEFINED);
-		function.setSignatureSource(SourceType.USER_DEFINED);
 
+		var id = currentProgram.startTransaction("Rename a function");
+		try {
+			function.setName(newName, SourceType.USER_DEFINED);
+			function.setSignatureSource(SourceType.USER_DEFINED);
+			currentProgram.endTransaction(id, true);
+		} catch (Exception e) {
+			currentProgram.endTransaction(id, false);
+			throw e;
+		}
 		return gson.toJson("SUCCESS");
 	}
 }

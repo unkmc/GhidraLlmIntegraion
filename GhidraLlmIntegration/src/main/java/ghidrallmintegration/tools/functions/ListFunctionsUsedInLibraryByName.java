@@ -10,7 +10,7 @@ import ghidra.program.model.symbol.SymbolIterator;
 import ghidra.program.model.symbol.SymbolTable;
 import ghidra.util.Msg;
 import ghidra.util.task.TaskMonitor;
-import ghidrallmintegration.tools.LlmTool;
+import ghidrallmintegration.tools.LlmTool; import ghidra.framework.plugintool.PluginTool;
 import ghidrallmintegration.tools.SimpleSymbol;
 
 public class ListFunctionsUsedInLibraryByName extends LlmTool {
@@ -21,8 +21,8 @@ public class ListFunctionsUsedInLibraryByName extends LlmTool {
 
 	public static final String parameter_1 = "externalLibraryName";
 
-	public ListFunctionsUsedInLibraryByName(Program currentProgram, TaskMonitor monitor) {
-		super(currentProgram, monitor);
+	public ListFunctionsUsedInLibraryByName(Program currentProgram, PluginTool tool, TaskMonitor monitor) {
+		super(currentProgram, tool, monitor);
 	}
 
 	@Override
