@@ -5,6 +5,7 @@ import ghidra.program.model.listing.Program;
 import ghidra.program.model.symbol.Symbol;
 import ghidra.program.model.symbol.SymbolTable;
 import ghidra.util.task.TaskMonitor;
+import ghidrallmintegration.Errors;
 import ghidrallmintegration.Json;
 import ghidrallmintegration.tools.LlmTool; import ghidra.framework.plugintool.PluginTool;
 
@@ -36,7 +37,7 @@ public class GetSymbolByAddress extends LlmTool {
 		String addressString = parameterMap.get(parameter_1);
 		Address address = currentProgram.getAddressFactory().getAddress(addressString);
 		if (address == null) {
-			return "Invalid address format or address does not exist.";
+			throw new IllegalArgumentException(Errors.noAddress(addressString));
 		}
 
 		SymbolTable symbolTable = currentProgram.getSymbolTable();

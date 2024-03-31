@@ -36,7 +36,7 @@ public class GetFunctionMetaByName extends LlmTool {
 
 		List<Map<String, Object>> list = new ArrayList<>();
 		for (Function function : functions) {
-			list.add(Json.toJson(function));
+			list.add(Json.toMap(function));
 		}
 
 		return gson.toJson(list);

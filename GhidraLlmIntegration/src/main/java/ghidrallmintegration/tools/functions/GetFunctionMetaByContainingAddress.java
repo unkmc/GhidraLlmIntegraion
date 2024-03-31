@@ -1,12 +1,12 @@
 package ghidrallmintegration.tools.functions;
 
 import java.util.Map;
-
 import ghidra.program.model.listing.Function;
 import ghidra.program.model.listing.Program;
 import ghidra.util.task.TaskMonitor;
 import ghidrallmintegration.Json;
-import ghidrallmintegration.tools.LlmTool; import ghidra.framework.plugintool.PluginTool;
+import ghidrallmintegration.tools.LlmTool;
+import ghidra.framework.plugintool.PluginTool;
 
 public class GetFunctionMetaByContainingAddress extends LlmTool {
 	@Override
@@ -35,6 +35,6 @@ public class GetFunctionMetaByContainingAddress extends LlmTool {
 			return "No function was found containing address \"" + address
 					+ ". You may have better results searching for a symbol at this address.";
 		}
-		return gson.toJson(Json.toJson(function));
+		return gson.toJson(Json.toMap(function));
 	}
 }

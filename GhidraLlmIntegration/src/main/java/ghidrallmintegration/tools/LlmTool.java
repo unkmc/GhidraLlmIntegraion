@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.theokanning.openai.assistants.AssistantFunction;
@@ -28,22 +30,49 @@ import ghidra.program.model.symbol.SymbolType;
 import ghidra.program.util.ProgramLocation;
 import ghidra.util.Msg;
 import ghidra.util.task.TaskMonitor;
+import ghidrallmintegration.Errors;
 import ghidrallmintegration.tools.ToolParameters.Builder;
 
+/**
+ * Abstract class representing a tool for integrating language model
+ * functionalities into the Ghidra software reverse engineering framework. This
+ * class provides a foundation for developing tools that can execute tasks based
+ * on language model inputs, handling various Ghidra-specific operations.
+ */
 public abstract class LlmTool {
 	protected Gson gson = new Gson();
 	protected Program currentProgram;
 	protected TaskMonitor monitor;
 	protected PluginTool tool;
+	protected static final int MONITOR_TIMEOUT = 30;
 
+	/**
+	 * Constructs an LLM tool instance with specified program, tool, and monitor.
+	 *
+	 * @param currentProgram The current Ghidra program.
+	 * @param tool           The plugin tool instance.
+	 * @param monitor        The task monitor.
+	 */
 	protected LlmTool(Program currentProgram, PluginTool tool, TaskMonitor monitor) {
 		this.currentProgram = currentProgram;
 		this.monitor = monitor;
 		this.tool = tool;
 	}
 
+	/**
+	 * Executes the tool with the given JSON parameters.
+	 *
+	 * @param parameterJson JSON string containing parameters for the execution.
+	 * @return A string result of the execution.
+	 * @throws Exception if an error occurs during execution.
+	 */
 	public abstract String execute(String parameterJson) throws Exception;
 
+	/**
+	 * Builds a Ghidra Tool object representing this LLM tool.
+	 *
+	 * @return The constructed Tool object.
+	 */
 	public final Tool BuildTool() {
 		return new Tool(AssistantToolsEnum.FUNCTION,
 				AssistantFunction.builder()
@@ -71,6 +100,13 @@ public abstract class LlmTool {
 		return toolParameters;
 	}
 
+	/**
+	 * Parses a JSON string into a map of parameters.
+	 *
+	 * @param parameterJson The JSON string to parse.
+	 * @return A map of parameters.
+	 * @throws IllegalArgumentException if the JSON cannot be parsed.
+	 */
 	public Map<String, String> parseParameterMap(String parameterJson) {
 		Map<String, String> parameterMap;
 		try {
@@ -78,12 +114,21 @@ public abstract class LlmTool {
 			}.getType();
 			parameterMap = gson.fromJson(parameterJson, type);
 		} catch (Exception exception) {
-			Msg.error(this, "Could not parse LLM provided parameter JSON: " + exception);
-			throw exception;
+			String errorString = "Could not parse LLM provided parameter JSON: " + exception;
+			Msg.error(this, errorString);
+			Msg.error(this, Errors.getStackTraceAsString(exception));
+			throw new IllegalArgumentException(errorString);
 		}
 		return parameterMap;
 	}
 
+	/**
+	 * Finds functions in the current program by name.
+	 *
+	 * @param name The name of the function(s) to find.
+	 * @return A list of matching functions.
+	 * @throws Exception if an error occurs during the search.
+	 */
 	protected List<Function> findFunctionsByName(String name) throws Exception {
 		SymbolTable symbolTable = currentProgram.getSymbolTable();
 		SymbolIterator it = symbolTable.getSymbolIterator(name, true);
@@ -95,41 +140,35 @@ public abstract class LlmTool {
 				functions.add(currentProgram.getFunctionManager().getFunctionAt(symbol.getAddress()));
 			}
 		}
-		if (!functions.isEmpty()) {
-			return functions;
-		}
-		String error = "Specified function, \"" + name + "\" was not found.";
-		Msg.error(this, error);
-		throw new Exception(error);
+		return functions;
 	}
 
+	@Nullable
 	protected Address addressFromString(String addressString) throws Exception {
 		AddressFactory addressFactory = currentProgram.getAddressFactory();
-		Address address = null;
 		try {
-			address = addressFactory.getAddress(addressString);
+			return addressFactory.getAddress(addressString);
 		} catch (IllegalArgumentException e) {
-			String error = "Invalid address format: \"" + addressString + "\".";
+			String error = "Invalid address format, \"" + addressString + "\".";
 			Msg.error(this, error);
-			throw new Exception(error);
+			Msg.error(this, Errors.getStackTraceAsString(e));
+			return null;
 		}
-		return address;
 	}
 
+	@Nullable
 	protected Function findFunctionContainingAddress(String addressString) throws Exception {
 		Address address = addressFromString(addressString);
-		if (address != null) {
-			Function function = currentProgram.getFunctionManager().getFunctionContaining(address);
-			if (function != null) {
-				return function;
-			}
+		if (address == null) {
+			String error = Errors.noFunctionFound(addressString);
+			Msg.error(this, error);
+			return null;
 		}
-
-		String error = "Specified function at address, \"" + addressString + "\" was not found.";
-		Msg.error(this, error);
-		return null;
+		Function function = currentProgram.getFunctionManager().getFunctionContaining(address);
+		return function;
 	}
 
+	@Nullable
 	protected Function getFunctionByEntryAddress(String addressStr) {
 		Address entryAddress = currentProgram.getAddressFactory().getAddress(addressStr);
 		if (entryAddress == null) {
@@ -142,30 +181,30 @@ public abstract class LlmTool {
 	protected HighFunction getHighFunction(Function function) {
 		DecompInterface decompiler = new DecompInterface();
 		decompiler.openProgram(currentProgram);
-		DecompileResults decompiledFunction = decompiler.decompileFunction(function, 30, monitor);
+		DecompileResults decompiledFunction = decompiler.decompileFunction(function, MONITOR_TIMEOUT, monitor);
 		return decompiledFunction.getHighFunction();
 	}
 
 	protected DecompileResults getFunctionDecompilation(Function function) {
 		DecompInterface decompiler = new DecompInterface();
 		decompiler.openProgram(currentProgram);
-		DecompileResults results = decompiler.decompileFunction(function, 30, monitor);
+		DecompileResults results = decompiler.decompileFunction(function, MONITOR_TIMEOUT, monitor);
 		if (!results.decompileCompleted()) {
-			Msg.info(this, "Decompilation failed.");
+			Msg.error(this, "Decompilation failed.");
 			return null;
 		}
 		return results;
 	}
-	
-    protected Address getCurrentAddress() {
-        GoToService goToService = tool.getService(GoToService.class);
-        if (goToService != null) {
-            ProgramLocation location = goToService.getDefaultNavigatable().getLocation();
-            if (location != null) {
-                return location.getAddress();
-            }
-        }
-        return null; // No current address focused
-    }
+
+	protected Address getCurrentAddress() {
+		GoToService goToService = tool.getService(GoToService.class);
+		if (goToService != null) {
+			ProgramLocation location = goToService.getDefaultNavigatable().getLocation();
+			if (location != null) {
+				return location.getAddress();
+			}
+		}
+		return null;
+	}
 
 }

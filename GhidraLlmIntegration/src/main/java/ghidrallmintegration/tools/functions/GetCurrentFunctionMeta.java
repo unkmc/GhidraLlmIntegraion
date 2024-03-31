@@ -21,8 +21,15 @@ public class GetCurrentFunctionMeta extends LlmTool {
 	@Override
 	public String execute(String parameterJson) throws Exception {
 		Address address = this.getCurrentAddress();
-		Function function = this.findFunctionContainingAddress(address.toString());
+		if (address == null) {
+			return "Focus is not currently on any address";
+		}
 
-		return gson.toJson(Json.toJson(function));
+		Function function = this.findFunctionContainingAddress(address.toString());
+		if (function == null) {
+			return "Focus is not currently on any function";
+		}
+
+		return gson.toJson(Json.toMap(function));
 	}
 }

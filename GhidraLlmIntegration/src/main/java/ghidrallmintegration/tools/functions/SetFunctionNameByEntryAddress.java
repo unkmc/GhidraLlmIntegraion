@@ -1,7 +1,6 @@
 package ghidrallmintegration.tools.functions;
 
 import java.util.Map;
-
 import ghidra.program.model.listing.Function;
 import ghidra.program.model.listing.Program;
 import ghidra.program.model.symbol.SourceType;
@@ -32,14 +31,18 @@ public class SetFunctionNameByEntryAddress extends LlmTool {
 	@Override
 	public String execute(String parameterJson) throws Exception {
 		Map<String, String> parameterMap = parseParameterMap(parameterJson);
-		String addressStr = parameterMap.get(parameter_1);
-		Function function = getFunctionByEntryAddress(addressStr);
-		String newName = parameterMap.get(parameter_2);
+		String addressString = parameterMap.get(parameter_1);
+		Function function = getFunctionByEntryAddress(addressString);
+		if (function == null) {
+			return "Function with entryAddress \"" + addressString + "\" was not found.";
+		}
 
+		String newName = parameterMap.get(parameter_2);
 		var id = currentProgram.startTransaction("Rename a function");
 		try {
-			function.setName(newName, SourceType.USER_DEFINED);
-			function.setSignatureSource(SourceType.USER_DEFINED);
+			Function actualFunction = function;
+			actualFunction.setName(newName, SourceType.USER_DEFINED);
+			actualFunction.setSignatureSource(SourceType.USER_DEFINED);
 			currentProgram.endTransaction(id, true);
 		} catch (Exception e) {
 			currentProgram.endTransaction(id, false);

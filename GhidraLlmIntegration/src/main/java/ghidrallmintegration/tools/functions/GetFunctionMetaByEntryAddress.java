@@ -5,8 +5,10 @@ import java.util.Map;
 import ghidra.program.model.listing.Function;
 import ghidra.program.model.listing.Program;
 import ghidra.util.task.TaskMonitor;
+import ghidrallmintegration.Errors;
 import ghidrallmintegration.Json;
-import ghidrallmintegration.tools.LlmTool; import ghidra.framework.plugintool.PluginTool;
+import ghidrallmintegration.tools.LlmTool;
+import ghidra.framework.plugintool.PluginTool;
 
 public class GetFunctionMetaByEntryAddress extends LlmTool {
 	@Override
@@ -29,9 +31,11 @@ public class GetFunctionMetaByEntryAddress extends LlmTool {
 	@Override
 	public String execute(String parameterJson) throws Exception {
 		Map<String, String> parameterMap = parseParameterMap(parameterJson);
-		String addressStr = parameterMap.get(parameter_1);
-		Function function = getFunctionByEntryAddress(addressStr);
-
-		return gson.toJson(Json.toJson(function));
+		String addressString = parameterMap.get(parameter_1);
+		Function function = getFunctionByEntryAddress(addressString);
+		if (function == null) {
+			return Errors.noFunctionFound(addressString);
+		}
+		return gson.toJson(Json.toMap(function));
 	}
 }

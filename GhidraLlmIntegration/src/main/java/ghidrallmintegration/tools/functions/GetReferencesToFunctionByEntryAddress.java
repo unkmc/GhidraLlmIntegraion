@@ -13,6 +13,7 @@ import ghidra.program.model.symbol.Reference;
 import ghidra.program.model.symbol.ReferenceIterator;
 import ghidra.program.model.symbol.ReferenceManager;
 import ghidra.util.task.TaskMonitor;
+import ghidrallmintegration.Errors;
 import ghidrallmintegration.tools.LlmTool; import ghidra.framework.plugintool.PluginTool;
 
 public class GetReferencesToFunctionByEntryAddress extends LlmTool {
@@ -36,17 +37,17 @@ public class GetReferencesToFunctionByEntryAddress extends LlmTool {
 	@Override
 	public String execute(String parameterJson) throws Exception {
 		Map<String, String> parameterMap = parseParameterMap(parameterJson);
-		String addressStr = parameterMap.get(parameter_1);
-		Address entryAddress = currentProgram.getAddressFactory().getAddress(addressStr);
+		String addressString = parameterMap.get(parameter_1);
+		Address entryAddress = currentProgram.getAddressFactory().getAddress(addressString);
 
 		if (entryAddress == null) {
-			throw new IllegalArgumentException("Invalid address format or address not found for input, \"" + addressStr + "\"");
+			throw new IllegalArgumentException(Errors.noAddress(addressString));
 		}
 
 		FunctionManager functionManager = currentProgram.getFunctionManager();
 		Function targetFunction = functionManager.getFunctionAt(entryAddress);
 		if (targetFunction == null) {
-			return "No function found at the given address, \"" + addressStr + "\"";
+			return Errors.noFunctionFound(addressString);
 		}
 
 		ReferenceManager referenceManager = currentProgram.getReferenceManager();

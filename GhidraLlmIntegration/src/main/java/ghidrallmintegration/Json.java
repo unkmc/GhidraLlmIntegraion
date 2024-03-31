@@ -33,7 +33,7 @@ public class Json {
 		return map;
 	}
 
-	public static Map<String, Object> toJson(Function function) {
+	public static Map<String, Object> toMap(Function function) {
 		var map = empty();
 		map.put("name", function.getName());
 

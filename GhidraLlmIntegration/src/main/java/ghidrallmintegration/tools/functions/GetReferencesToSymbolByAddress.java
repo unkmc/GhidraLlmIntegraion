@@ -11,6 +11,7 @@ import ghidra.program.model.symbol.Reference;
 import ghidra.program.model.symbol.ReferenceIterator;
 import ghidra.program.model.symbol.ReferenceManager;
 import ghidra.util.task.TaskMonitor;
+import ghidrallmintegration.Errors;
 import ghidrallmintegration.tools.LlmTool; import ghidra.framework.plugintool.PluginTool;
 
 public class GetReferencesToSymbolByAddress extends LlmTool {
@@ -39,7 +40,7 @@ public class GetReferencesToSymbolByAddress extends LlmTool {
 		try {
 			Address toAddress = currentProgram.getAddressFactory().getAddress(addressString);
 			if (toAddress == null) {
-				return "Invalid address format or address does not exist.";
+				throw new IllegalArgumentException(Errors.noAddress(addressString));
 			}
 
 			ReferenceManager refManager = currentProgram.getReferenceManager();

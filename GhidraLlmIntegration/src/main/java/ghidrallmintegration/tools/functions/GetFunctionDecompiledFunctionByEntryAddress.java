@@ -7,7 +7,8 @@ import ghidra.app.decompiler.DecompileResults;
 import ghidra.program.model.listing.Function;
 import ghidra.program.model.listing.Program;
 import ghidra.util.task.TaskMonitor;
-import ghidrallmintegration.tools.LlmTool; import ghidra.framework.plugintool.PluginTool;
+import ghidrallmintegration.tools.LlmTool;
+import ghidra.framework.plugintool.PluginTool;
 
 public class GetFunctionDecompiledFunctionByEntryAddress extends LlmTool {
 	@Override
@@ -32,7 +33,9 @@ public class GetFunctionDecompiledFunctionByEntryAddress extends LlmTool {
 		Map<String, String> parameterMap = parseParameterMap(parameterJson);
 		String addressStr = parameterMap.get(parameter_1);
 		Function function = getFunctionByEntryAddress(addressStr);
+		if (function == null) {
 
+		}
 		DecompInterface decompiler = new DecompInterface();
 		decompiler.openProgram(currentProgram);
 		DecompileResults results = decompiler.decompileFunction(function, 30, monitor);
